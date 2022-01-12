@@ -23,7 +23,7 @@ public class MainGame {
         try {
             MineSweeper game;
             
-            game = new  MineSweeper(3, 10, 10);
+            game = new  MineSweeper(9, 10, 10);
             game.game();
         } 
         catch (Exception ex ) {

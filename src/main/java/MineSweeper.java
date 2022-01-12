@@ -6,12 +6,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import java.util.Random;
+import java.util.Scanner;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author itamar
@@ -24,7 +24,7 @@ public class MineSweeper implements ActionListener {
     public int rowCount;
     public int columnCount;
     public int Board[][];
-    
+    public int Game = 0;
     public int mineCount;
 
 // constractor
@@ -38,31 +38,43 @@ public class MineSweeper implements ActionListener {
      */
     public MineSweeper(int mineCount, int columnCount, int rowCount) throws Exception {
 
-       // validValues(mineCount, columnCount, rowCount);
-
+        // validValues(mineCount, columnCount, rowCount);
         this.mineCount = mineCount;
         this.columnCount = columnCount;
         this.rowCount = rowCount;
 
     }
+
     // Check neighbors
-    public void neighbors(int x,int y)
-    {
-        int mineclose=0;
-        for( int i = x-1;i<=x+1;i++)
-            for (int j=y-1;j<=y+1;j++)
-            {
-                if (this.Board[i][j] != 0)
-                {
-                    mineclose++;
+    /**
+     *
+     * @param PlaceX the place from the user that he want to check on the board
+     * @param PlaceY "" "" "" "" "" "" "" "" ""
+     * @return returns the number of mines that around the place that the user
+     * chose
+     */
+    public int checkNoOfMines(int PlaceX, int PlaceY) {
+        int count = 0;
+        int MinesArround = 0;
+        for (int currentCol = PlaceX - 1; currentCol <= PlaceX + 1; currentCol++) {
+            for (int currentRow = PlaceY - 1; currentRow <= PlaceY + 1; currentRow++) {
+                if (currentCol >= 0 && currentRow >= 0 && currentCol < Board.length && currentRow < Board.length) {
+                    if (!(currentCol == PlaceX && currentRow == PlaceY)) {
+                        count += Board[currentCol][currentRow];
+                    }
                 }
             }
-       
+        }
+        while (count != 0) {
+            MinesArround++;
+            count++;
+        }
+        return MinesArround;
     }
-    
 
     /**
-     *  checks if the values are valid 
+     * checks if the values are valid
+     *
      * @param mineCount count of mines on board to be set in the board
      * @param columnCount count of column in the board.
      * @param rowCount count of rows in the board.
@@ -87,55 +99,84 @@ public class MineSweeper implements ActionListener {
         }
 
     }
-    public void createBoard () 
-    {
+
+    /**
+     *
+     * the function create board of row count of row count
+     */
+    public void createBoard() {
         int randx;
         int randy;
-         Random rnd = new Random();
-           this.Board = new int[rowCount][columnCount];
-        int mineCounter=this.mineCount;
-         while (mineCounter!=0)
-         {
-       
-               
-                randy = rnd.nextInt(rowCount);
-                randx = rnd.nextInt(columnCount);
-                if (this.Board[randx][randy] == -1 )
-                {
-                   
-                    continue;
-                    
-                }
-                Board[randx][randy] = -1;
-                mineCounter--;
-         }
-                
-         
-    
+        Random rnd = new Random();
+        this.Board = new int[rowCount][columnCount];
+        int mineCounter = this.mineCount;
+        while (mineCounter != 0) {
+
+            randy = rnd.nextInt(rowCount);
+            randx = rnd.nextInt(columnCount);
+            if (this.Board[randx][randy] == -1) {
+
+                continue;
+
+            }
+            Board[randx][randy] = -1;
+            mineCounter--;
+        }
+
     }
-            
-            
-    
-   
-    public void game()
-    {
-       createBoard();
-       PrintBoard();
-       
+
+    // checks if there is a mine 
+    public void boom(int placeX, int placeY) {
+        if (Board[placeX][placeY] == -1) {
+            System.out.println("           0");
+            System.out.println("          | |");
+            System.out.println("          | |");
+            System.out.println("          | |");
+            System.out.println("the end   0 0");
+            Game = 1;
+        }
+
     }
-    public void PrintBoard ()
-    {
-        for(int i = 0; i <this.rowCount;i++)
-       {
-           for(int j = 0;j<this.columnCount;j++)
-           {
-               System.out.print(" "+ Board[i][j]);
-           }
-           System.out.println();
+
+    /**
+     * the function create scanner that gets from the user x and y.
+     */
+    public void getPlace() {
+        int PlaceX;
+        int PlaceY;
+        int numOfmines;
+        Scanner scan = new Scanner(System.in);
+        PlaceX = scan.nextInt();
+        PlaceY = scan.nextInt();
+        boom(PlaceX, PlaceY);
+        if (Game == 0) {
+            numOfmines = checkNoOfMines(PlaceX, PlaceY);
+            System.out.println("mines arround you " + numOfmines);
+        }
+
     }
+
+    /**
+     * the main function
+     */
+    public void game() {
+        createBoard();
+        PrintBoard();
+        getPlace();
+
     }
-    
-    
+
+    /**
+     * the function prints the board.
+     */
+    public void PrintBoard() {
+        for (int i = 0; i < this.rowCount; i++) {
+            for (int j = 0; j < this.columnCount; j++) {
+                System.out.print(" " + Board[i][j]);
+            }
+            System.out.println();
+        }
+    }
 
 // getters and setters
     public int getMineCount() {
@@ -174,7 +215,5 @@ public class MineSweeper implements ActionListener {
     public void actionPerformed(ActionEvent arg0) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    
 
 }
