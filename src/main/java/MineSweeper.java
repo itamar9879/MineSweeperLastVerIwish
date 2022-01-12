@@ -24,6 +24,7 @@ public class MineSweeper implements ActionListener {
     public int rowCount;
     public int columnCount;
     public int Board[][];
+    
     public int mineCount;
 
 // constractor
@@ -90,12 +91,27 @@ public class MineSweeper implements ActionListener {
     {
         int randx;
         int randy;
-        int mineCounter=0;
-           int flag = 0;
-        Random rnd = new Random();
-                randy = rnd.nextInt(rowCount-1);
-                randx = rnd.nextInt(columnCount-1);
-                this.Board[randx][randy] = -1;
+         Random rnd = new Random();
+           this.Board = new int[rowCount][columnCount];
+        int mineCounter=this.mineCount;
+         while (mineCounter!=0)
+         {
+       
+               
+                randy = rnd.nextInt(rowCount);
+                randx = rnd.nextInt(columnCount);
+                if (this.Board[randx][randy] == -1 )
+                {
+                   
+                    continue;
+                    
+                }
+                Board[randx][randy] = -1;
+                mineCounter--;
+         }
+                
+         
+    
     }
             
             
@@ -109,12 +125,13 @@ public class MineSweeper implements ActionListener {
     }
     public void PrintBoard ()
     {
-        for(int i = 0; i <=this.rowCount;i++)
+        for(int i = 0; i <this.rowCount;i++)
        {
-           for(int j = 0;j<=this.columnCount;j++)
+           for(int j = 0;j<this.columnCount;j++)
            {
-               System.out.println(Board[i][j]);
+               System.out.print(" "+ Board[i][j]);
            }
+           System.out.println();
     }
     }
     

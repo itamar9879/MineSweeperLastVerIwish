@@ -12,7 +12,7 @@ import java.util.Random;
  *
  * @author itamar
  */
-public class NewMain {
+public class MainGame {
 
     /**
      * @param args the command line arguments
@@ -23,7 +23,7 @@ public class NewMain {
         try {
             MineSweeper game;
             
-            game = new  MineSweeper(30, 40, 40);
+            game = new  MineSweeper(3, 10, 10);
             game.game();
         } 
         catch (Exception ex ) {
