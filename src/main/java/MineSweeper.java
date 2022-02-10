@@ -7,6 +7,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import java.util.Random;
 import java.util.Scanner;
+import javax.crypto.IllegalBlockSizeException;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -24,6 +25,7 @@ public class MineSweeper implements ActionListener {
     public int rowCount;
     public int columnCount;
     public int Board[][];
+    public int BoardShown[][];
     public int Game = 0;
     public int mineCount;
 
@@ -43,33 +45,6 @@ public class MineSweeper implements ActionListener {
         this.columnCount = columnCount;
         this.rowCount = rowCount;
 
-    }
-
-    // Check neighbors
-    /**
-     *
-     * @param PlaceX the place from the user that he want to check on the board
-     * @param PlaceY "" "" "" "" "" "" "" "" ""
-     * @return returns the number of mines that around the place that the user
-     * chose
-     */
-    public int checkNoOfMines(int PlaceX, int PlaceY) {
-        int count = 0;
-        int MinesArround = 0;
-        for (int currentCol = PlaceX - 1; currentCol <= PlaceX + 1; currentCol++) {
-            for (int currentRow = PlaceY - 1; currentRow <= PlaceY + 1; currentRow++) {
-                if (currentCol >= 0 && currentRow >= 0 && currentCol < Board.length && currentRow < Board.length) {
-                    if (!(currentCol == PlaceX && currentRow == PlaceY)) {
-                        count += Board[currentCol][currentRow];
-                    }
-                }
-            }
-        }
-        while (count != 0) {
-            MinesArround++;
-            count++;
-        }
-        return MinesArround;
     }
 
     /**
@@ -99,6 +74,56 @@ public class MineSweeper implements ActionListener {
         }
 
     }
+    // Check neighbors
+
+    /**
+     *
+     * @param PlaceX the place from the user that he want to check on the board
+     * @param PlaceY "" "" "" "" "" "" "" "" ""
+     * @return returns the number of mines that around the place that the user
+     * chose
+     */
+    public int checkNoOfMines(int PlaceX, int PlaceY) {
+        int count = 0;
+        int MinesArround = 0;
+        for (int currentCol = PlaceX - 1; currentCol <= PlaceX + 1; currentCol++) {
+            for (int currentRow = PlaceY - 1; currentRow <= PlaceY + 1; currentRow++) {
+                if (currentCol >= 0 && currentRow >= 0 && currentCol < Board.length && currentRow < Board.length) {
+                    if (!(currentCol == PlaceX && currentRow == PlaceY)) {
+                        count += Board[currentCol][currentRow];
+                    }
+                }
+            }
+        }
+        while (count != 0) {
+            MinesArround++;
+            count++;
+        }
+        return MinesArround;
+    }
+
+    //the next step the "graphic"
+    public void nextStep(int placeX, int placeY) {
+
+        int MinesArround = checkNoOfMines(placeX, placeY);
+        if (MinesArround != 0) {
+            this.BoardShown[placeX][placeY] = MinesArround;
+        }
+        
+      else 
+      {
+       
+            
+        
+        
+
+        
+          
+          
+      }
+
+
+    }
 
     /**
      *
@@ -107,6 +132,18 @@ public class MineSweeper implements ActionListener {
     public void createBoard() {
         int randx;
         int randy;
+        // the board that we shows to the user 
+        this.BoardShown = new int[rowCount][columnCount];
+        // I chose the number 9 to make the nubmer 0 to be an Empty place 
+        // while we chosing a place with zero mines.
+        for (int i = 0; i < this.rowCount; i++) {
+            for (int j = 0; j < this.columnCount; j++) {
+                this.BoardShown[i][j] = 9;
+            }
+            System.out.println();
+        }
+
+        //
         Random rnd = new Random();
         this.Board = new int[rowCount][columnCount];
         int mineCounter = this.mineCount;
@@ -139,17 +176,37 @@ public class MineSweeper implements ActionListener {
     }
 
     /**
+     * all the marks lines its a test of "try again after the exeption
      * the function create scanner that gets from the user x and y.
      */
-    public void getPlace() {
-        int PlaceX;
-        int PlaceY;
+    public void getPlace() throws Exception {
+        int PlaceX=0;//default
+        int PlaceY=0;//default
+        boolean ResultOfVars = false;
         int numOfmines;
+        System.out.println("Enter X and Y of place ");
         Scanner scan = new Scanner(System.in);
+         //while(ResultOfVars == false )
+        // {
         PlaceX = scan.nextInt();
         PlaceY = scan.nextInt();
+       if (PlaceX > rowCount - 1) {
+            throw new IllegalBlockSizeException("you entered worng number\n"
+                    + " please try to enter number \n "
+                    + "between the rowCount and columns Count you entered ");
+      }
+       // else ResultOfVars = true;
+      if (PlaceY > columnCount - 1) {
+            throw new IllegalBlockSizeException("you entered worng number\n"
+                    + " please try to enter number \n "
+                    + "between the rowCount and columns Count you entered ");
+        }
+        // else ResultOfVars = true;
+       // }
+         
         boom(PlaceX, PlaceY);
         if (Game == 0) {
+            nextStep(PlaceX, PlaceY);
             numOfmines = checkNoOfMines(PlaceX, PlaceY);
             System.out.println("mines arround you " + numOfmines);
         }
@@ -159,20 +216,23 @@ public class MineSweeper implements ActionListener {
     /**
      * the main function
      */
-    public void game() {
+    public void game() throws Exception {
         createBoard();
-        PrintBoard();
-        getPlace();
+        while (Game != 1) {
+            printBoard();
+            getPlace();
+
+        }
 
     }
 
     /**
      * the function prints the board.
      */
-    public void PrintBoard() {
+    public void printBoard() {
         for (int i = 0; i < this.rowCount; i++) {
             for (int j = 0; j < this.columnCount; j++) {
-                System.out.print(" " + Board[i][j]);
+                System.out.print(" " + this.BoardShown[i][j]);
             }
             System.out.println();
         }
